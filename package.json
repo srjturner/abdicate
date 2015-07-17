@@ -1,0 +1,25 @@
+{
+  "name": "abdicate",
+  "version": "1.0.3",
+  "description": "Annotation-Based Dependency Injection",
+  "main": "index.js",
+  "scripts": {
+    "test": "export NODE_PATH=\"${NODE_PATH}:${PWD}/lib\"; jasmine JASMINE_CONFIG_PATH=test/jasmine.json"
+  },
+  "keywords": [
+    "di",
+    "dependency-injection"
+  ],
+  "author": "Simon Turner",
+  "license": "ISC",
+  "dependencies": {
+    "annotations": "^0.1.337",
+    "breeze-dag": "^0.1.0",
+    "curry": "^1.2.0",
+    "promise": "^7.0.3",
+    "recursive-readdir": "^1.2.1"
+  },
+  "devDependencies": {
+    "jasmine-expect": "^1.22.3"
+  }
+}
