@@ -39,69 +39,64 @@ A Mongoose model requires a database connection which requires a configuration l
 The Abdicate approach to solving that problem looks like this:
 
 _Configuration:_
-```
-/**
- * @Provides name='config'
- * @Requires ['environment']
- */
-module.exports = function(env, callback) {
-  if (env == 'production') return require('./prod_config.js')
-  else return require('./dev_config.js')
-}
 
-```
+    /**
+     * @Provides name='config'
+     * @Requires ['environment']
+     */
+    module.exports = function(env, callback) {
+      if (env == 'production') return require('./prod_config.js')
+      else return require('./dev_config.js')
+    }
 
 _Database:_
-```
-var mongoose = require('mongoose')
-/**
- * @Provides name='db.connection' async='callback'
- * @Requires ['config']
- */
-module.exports = function(config, callback) {
-  var uri = config.db.uri
-  mongoose.connect(uri, function (err) {
-    callback(err, mongoose.connection)
-  })
-}
-```
+
+    var mongoose = require('mongoose')
+    /**
+     * @Provides name='db.connection' async='callback'
+     * @Requires ['config']
+     */
+    module.exports = function(config, callback) {
+      var uri = config.db.uri
+      mongoose.connect(uri, function (err) {
+        callback(err, mongoose.connection)
+      })
+    }
 
 _Model:_
-```
-var mongoose = require('mongoose')
-/**
- * @Provides name='user.model'
- * @Requires ['db.connection']
- */
-module.exports = function(connection) {
-  var schema = new mongoose.Schema({
-    name: String,
-    passwordHash: String
-  })
-  return connection.model('users', schema)
-}
-```
+
+    var mongoose = require('mongoose')
+    /**
+     * @Provides name='user.model'
+     * @Requires ['db.connection']
+     */
+    module.exports = function(connection) {
+      var schema = new mongoose.Schema({
+        name: String,
+        passwordHash: String
+      })
+      return connection.model('users', schema)
+    }
 
 _App:_
-```
-// Require Abdicate itself
-var Context = require('abdicate')
 
-// Create the DI Context, supplying the base directories to autowire:
-var rootpath = path.join(__dirname, 'src')
-var context = new Context([rootpath])
-
-// Explicitly register any factories that cannot be autowired:
-context.register('environment', process.env.NODE_ENV || 'development')
-
-// Bootstrap the DI Context (Promise-style API) with eager-instantiation = true
-context.bootstrap(true).then(function(context) {  
-
-  // Reference any eagerly instantiated Objects, as necessary
-  var User = context.instances['user.model']
-  ...
-}
-```
+    // Require Abdicate itself
+    var Context = require('abdicate')
+    
+    // Create the DI Context, supplying the base directories to autowire:
+    var rootpath = path.join(__dirname, 'src')
+    var context = new Context([rootpath])
+    
+    // Explicitly register any factories that cannot be autowired:
+    context.register('environment', process.env.NODE_ENV || 'development')
+    
+    // Bootstrap the DI Context (Promise-style API) with eager-instantiation = true
+    context.bootstrap(true).then(function(context) {  
+    
+    // Reference any eagerly instantiated Objects, as necessary
+    var User = context.instances['user.model']
+      ...
+    }
 
 ## Annotation Reference
 
@@ -143,6 +138,10 @@ Construct a new DI context.
 
 __filepaths__    An array of absolute paths which indicate the directories containing your modules to scan.
 
+### Context Properties
+
+__instances__  A Map of names to Objects which is populated when bootstrap(true) is called. Before bootstrap() is called or if its 'eager' parameter is set to false, instances will be empty. Note: if using scope=prototype, you should use Context#getInstance(name) to ensure that each instance was newly-created. Context#getInstance(name) on a singleton-scoped Object is essentially the same as Context#instances(name), but works lazily (i.e. if no instance yet exists because bootstrapping was not eager, getInstance() will create one and cache it.
+
 ### Context Prototype Methods
 
 These are invoked on an instance of Context.
@@ -153,9 +152,9 @@ Explicitly register an instance (or a function to create one) with this Context
 
 __name__                      The logical name of the Object  
 __factoryMethodOrInstance__   The factory method to produce instances, or else a literal instance   
-__forceIntance__              Treat factoryMethodOrInstance as an instance even if ```factoryMethodOrInstance instanceof Funtion == true```  
+__forceIntance__              Treat factoryMethodOrInstance as an instance even if ```factoryMethodOrInstance instanceof Function == true```  
 __scope__                     The scope ('prototype' or 'singleton') of the Object  
-__async__                     False (for synchronous factory methods), 'promise' or 'callback'  
+__async__                     False (for synchronous constructors), 'promise' or 'callback'  
 __dependencies__              An array of other logical names that the factory method requires when called.
 
 #### Context#bootstrap(eager, callback)
@@ -166,7 +165,7 @@ __callback__                   The (optional) callback for non-Promise based inv
 
 #### Context#getInstance(name, callback) 
 
-Get the Object instance corresponding to the logical name. This will return a Promise if no callback is supplied, otherwise it will invoke the callback in the standard NodeJs (err, result) style. The instance will be created new if it's scope = "prototype" otherwise will return the same instance each time (scope = 'singleton'). Invokes the callback (if supplied) with the instance or else returns a Promise for the instance.
+Get the Object instance corresponding to the logical name. This will return a Promise if no callback is supplied, otherwise it will invoke the callback in the standard Node (err, result) style. The instance will be created new if it's scope = "prototype" otherwise will return the same instance each time (scope = 'singleton'). Invokes the callback (if supplied) with the instance or else returns a Promise for the instance.
 
 __name__        The logical name (within this context) of the instance to get  
 __callback__    The (optional) callback for non-Promise style invocation. 
