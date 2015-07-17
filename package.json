@@ -10,8 +10,12 @@
     "di",
     "dependency-injection"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srjturner/abdicate.git"
+  },
   "author": "Simon Turner",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "annotations": "^0.1.337",
     "breeze-dag": "^0.1.0",
