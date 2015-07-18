@@ -3,7 +3,7 @@ Dependency-injection with the following objectives:
 * Lightweight - no imposition of frameworks besides the DI service itself
 * Minimal impact on your coding style - all module configuration can be done via annotations.
 * Support for explicit registration to allow 3rd-party code or where runtime logic is required.
-* Support for constructor-functions, and asynchronous Promise and callback-style factory methods.
+* Support for constructor-functions, and asynchronous Promise and Callback-style factory methods.
 * Support for both Promise and Callback styles in the external API.
 * Work seamlessly alongside standard Node requires() declarations.
 
@@ -16,16 +16,16 @@ Dependency-injection with the following objectives:
 
 This much we know already. However, it gets tricky when the following holds:
 
-* A function exported by some module is a constructor or a factory method. In other words, it produces Objects.
-* The Objects produced by the function are required by the functions of other modules.
+* A function exported by some module is a constructor or a factory method. In other words, it produces objects.
+* The objects produced by the function are required by the functions of other modules.
 
-How do we intervene between Module A exporting a constructor/factory function and Module B consuming the instantiated Object, so that the consumer is not responsible for the instantiation?
+So - how do we intervene between Module A exporting a constructor/factory function and Module B consuming the instantiated Object, so that the consumer is not responsible for the instantiation?
 
 ## Concepts
 
 * Some function *provides* an Object or value. 
-* The function may be a constructor, or it may be an asynchronous "factory" (either *promise* or *callback*).
-* The objects produced by functions have a scope: either *singleton* (global instance) or *prototype* (a new instance each time).
+* The function may be a (synchronous) constructor, or it may be an asynchronous "factory" (either *promise* or *callback*).
+* The objects produced by functions have a *scope*: either *singleton* (global instance) or *prototype* (a new instance every time).
 * Some other function *requires* some Objects or values but does not know how to instantiate them.
 * The *context* wires up the providers to the requirers.
 * Functions can both *require* and *provide*.
@@ -115,7 +115,8 @@ The @Requires annotation lists the logical names of the parameters to your funct
 
 The @Provides annotation defines a provider of Objects within the Context. It has 3 attributes:
 
-__name__      The logical name of the Objects provided by the function. 
+__name__      The logical name of the Objects provided by the function. __Note__: the prefix "name=" is optional, it is valid to
+              simply use @Provides 'foo' rather than @Provides name='foo'.
 
 __scope__     The scope of the Objects - one of 'singleton' (the default) or 'prototype'.
 
@@ -124,7 +125,7 @@ __async__     If undefined or set to false, indicates a synchronous constructor 
 Note: although all synchronous functions are invoked as constructors (i.e. ```new Foo(..)``` ) they are free to return something other than ```this```.
 
     /**
-     * @Provides name='random.string' scope='prototype' async='promise'
+     * @Provides 'random.string' scope='prototype' async='promise'
      */
     module.exports.randomString = function() { 
       return Promise.resolve(Math.random().toString(36).substring(7));
@@ -140,7 +141,7 @@ __filepaths__    An array of absolute paths which indicate the directories conta
 
 ### Context Properties
 
-__instances__  A Map of names to Objects which is populated when bootstrap(true) is called. Before bootstrap() is called or if its 'eager' parameter is set to false, instances will be empty. Note: if using scope=prototype, you should use Context#getInstance(name) to ensure that each instance was newly-created. Context#getInstance(name) on a singleton-scoped Object is essentially the same as Context#instances(name), but works lazily (i.e. if no instance yet exists because bootstrapping was not eager, getInstance() will create one and cache it.
+__instances__  A Map of names to Objects which is populated when bootstrap(true) is called. Before bootstrap() is called or if its 'eager' parameter is set to false, instances will be empty. Note: if using scope=prototype, you should use Context#getInstance(name) to ensure that each instance was newly-created. Context#getInstance(name) on a singleton-scoped Object is essentially the same as Context#instances(name), but works lazily - i.e. if no instance yet exists because bootstrapping was not eager, getInstance() will create one and cache it.
 
 ### Context Prototype Methods
 

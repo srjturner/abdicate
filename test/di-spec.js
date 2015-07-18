@@ -197,6 +197,16 @@ describe('abdicate', function() {
       errorHandler(done))
   })
   
+  it('accepts abbreviated Promise annotations', function(done) {
+    context.bootstrap(true)
+      .then(function(context) {
+        expect(context.instances['abbreviated1']).toBeDefined()
+        expect(context.instances['abbreviated2']).toBeDefined()
+        done()
+    }, 
+    errorHandler(done))
+  })
+  
   afterEach(function(done) {
     context = undefined
     done()
