@@ -1,6 +1,6 @@
 /**
- * @Requires ['db.uri']
- * @Provides name='my.connection' async='callback'
+ * @Requires 'db.uri'
+ * @Provides 'my.connection' async='callback'
  */
 var connect = function(options, callback) {
   wait(100) // fake creating a connection to a DB

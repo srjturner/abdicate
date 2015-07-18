@@ -41,8 +41,8 @@ The Abdicate approach to solving that problem looks like this:
 _Configuration:_
 
     /**
-     * @Provides name='config'
-     * @Requires ['environment']
+     * @Provides 'config'
+     * @Requires 'environment'
      */
     module.exports = function(env, callback) {
       if (env == 'production') return require('./prod_config.js')
@@ -53,8 +53,8 @@ _Database:_
 
     var mongoose = require('mongoose')
     /**
-     * @Provides name='db.connection' async='callback'
-     * @Requires ['config']
+     * @Provides 'db.connection' async='callback'
+     * @Requires 'config'
      */
     module.exports = function(config, callback) {
       var uri = config.db.uri
@@ -67,8 +67,8 @@ _Model:_
 
     var mongoose = require('mongoose')
     /**
-     * @Provides name='user.model'
-     * @Requires ['db.connection']
+     * @Provides 'user.model'
+     * @Requires 'db.connection'
      */
     module.exports = function(connection) {
       var schema = new mongoose.Schema({
@@ -102,15 +102,26 @@ _App:_
 
 ### @Requires
 
-The @Requires annotation lists the logical names of the parameters to your function. These need not have any correspondence to module names or paths, they just need to match the names of Objects that can be provided from the Context.
+The @Requires annotation lists the logical names of the parameters to your function. These need not have any correspondence to module names or paths, they just need to match the names of Objects that can be provided from the Context. 
+
+The value can be a simple string, for a single dependency:
 
     /**
-     * @Requires ['db.uri']
+     * @Requires ['my.foo']
      */ 
-    module.exports.connect = function(uri, callback) {  
+    module.exports.singledependency = function(foo) {  
       ...  
     }  
 
+or for many dependencies it should be an array of strings:
+
+    /**
+     * @Requires ['my.foo', 'my.bar']
+     */ 
+    module.exports.multipledependencies = function(foo, bar) {  
+      ...  
+    }  
+    
 ### @Provides
 
 The @Provides annotation defines a provider of Objects within the Context. It has 3 attributes:

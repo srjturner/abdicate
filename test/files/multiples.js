@@ -1,5 +1,5 @@
 /**
- * @Requires ['multiple1.string']
+ * @Requires 'multiple1.string'
  * @Provides name='multiple1'
  */
 var Multiples1 = function(str) {
