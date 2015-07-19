@@ -34,7 +34,7 @@ That's all there is to it.
 
 ### Example
 
-A Mongoose model requires a database connection which requires a configuration loaded from a file which depends upon the NODE_ENV. In the traditional Node way that means that the model asks some database module for a connection and the database module asks a config module for config and the config asks the environment for the NODE_ENV and reads the file. This creates a chain of dependencies, which limits the way that each module can be reused, and makes it hard to test a module in isolation.
+A Mongoose model requires a database connection which requires a configuration loaded from a file which depends upon the NODE_ENV. In the standard Node way this means that the model asks some database module for a connection and the database module asks a config module for config and the config asks the environment for the NODE_ENV and reads the file. This creates a chain of dependencies, which limits the way that each module can be reused, and makes it hard to test a module in isolation.
 
 The Abdicate approach to solving that problem looks like this:
 
@@ -93,9 +93,9 @@ _App:_
     // Bootstrap the DI Context (Promise-style API) with eager-instantiation = true
     context.bootstrap(true).then(function(context) {  
     
-    // Reference any eagerly instantiated Objects, as necessary
-    var User = context.instances['user.model']
-      ...
+        // Reference any eagerly instantiated Objects, as necessary
+        var User = context.instances['user.model']
+        ...
     }
 
 ## Annotation Reference
@@ -107,7 +107,7 @@ The @Requires annotation lists the logical names of the parameters to your funct
 The value can be a simple string, for a single dependency:
 
     /**
-     * @Requires ['my.foo']
+     * @Requires 'my.foo'
      */ 
     module.exports.singledependency = function(foo) {  
       ...  
@@ -127,7 +127,7 @@ or for many dependencies it should be an array of strings:
 The @Provides annotation defines a provider of Objects within the Context. It has 3 attributes:
 
 __name__      The logical name of the Objects provided by the function. __Note__: the prefix "name=" is optional, it is valid to
-              simply use @Provides 'foo' rather than @Provides name='foo'.
+              simply use ```@Provides 'foo'``` rather than ```@Provides name='foo'```.
 
 __scope__     The scope of the Objects - one of 'singleton' (the default) or 'prototype'.
 
@@ -148,7 +148,7 @@ Note: although all synchronous functions are invoked as constructors (i.e. ```ne
 
 Construct a new DI context. 
 
-__filepaths__    An array of absolute paths which indicate the directories containing your modules to scan.
+__filepaths__    An array of absolute paths which indicate the directories containing the modules to scan.
 
 ### Context Properties
 
@@ -171,7 +171,7 @@ __dependencies__              An array of other logical names that the factory m
 
 #### Context#bootstrap(eager, callback)
 
-Scan the filepaths and read the annotated modules in those paths to create a set of InstanceFactories. If eager=true then also resolve their dependencies to 'bootstrap' this Context and populate Context.instances. In any case, this will asynchronously return itself either via the Callback (if provided) or else as a Promise. 
+Scans the 'filepaths' and register any annotated functions into the Context. If eager=true then this also invokes each registered function (in the order implied by their inter-dependencies) to populate 'Context.instances'. In any case, this will asynchronously return itself either via the Callback (if provided) or else as a Promise. 
 
 __callback__                   The (optional) callback for non-Promise based invocation. 
 
