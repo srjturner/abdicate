@@ -21,6 +21,7 @@
     "breeze-dag": "^0.1.0",
     "curry": "^1.2.0",
     "promise": "^7.0.3",
+    "ramda": "^0.16.0",
     "recursive-readdir": "^1.2.1"
   },
   "devDependencies": {

@@ -183,15 +183,17 @@ describe('abdicate', function() {
   it('can fetch or create multiple new instances in one call', function(done) {
     context.bootstrap(true)
       .then(function(context) {
-        return context.getInstances(['my.model', 'my.service'])
+        return context.getInstances(['my.model', 'my.model', 'my.service'])
       })
       .then(function(instances) {
-        var model = instances['my.model']
+        var models = instances['my.model']
+        expect(models.length).toEqual(2)
+        expect(models[0].string).toEqual(modelStringValue)
         var service = instances['my.service']
-        expect(model.string).toEqual(modelStringValue)
         expect(service.model).toBeDefined
-        model.string = "newModelValue"
-        expect(service.model.string).not.toEqual(model.string)
+        models[0].string = "newModelValue"
+        expect(models[1].string).not.toEqual(models[0].string)
+        expect(service.model.string).not.toEqual(models[0].string)
         done()
       }, 
       errorHandler(done))
