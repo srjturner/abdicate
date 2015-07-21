@@ -1,6 +1,6 @@
 {
   "name": "abdicate",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Annotation-Based Dependency Injection",
   "main": "index.js",
   "scripts": {
