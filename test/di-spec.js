@@ -1,5 +1,5 @@
 var Context = require('lib/context')
-var curry = require('curry')
+var R = require('ramda')
 var path = require('path')
 
 describe('abdicate', function() {
@@ -9,7 +9,7 @@ describe('abdicate', function() {
   var nonModuleStringValue = 'nonModuleStringValue'
   var dbUri = 'mongodb://foo'
       
-  var errorHandler = curry(function(done, err) {
+  var errorHandler = R.curry(function(done, err) {
     this.fail(err)
     done()
   })
