@@ -102,7 +102,7 @@ _App:_
 
 ### @Requires
 
-The @Requires annotation lists the logical names of the parameters to your function. These need not have any correspondence to the names of the method parameters, or to the module's own name or its path. The names just need to correspond to objects that can be provided by the Context - that is, to names specified in @Provides annotations, or explicitly registered.
+The @Requires annotation lists the _logical_ names of the values that will become the parameters to your function. These names can be anything as long as they correspond to objects that can be provided by the Context at runtime. That is, they must match names implicitly specified in @Provides annotations, or explicitly specified via Context#register().
 
 The value can be a simple string, for a single dependency:
 
@@ -171,8 +171,9 @@ __dependencies__              An array of other logical names that the factory m
 
 #### Context#bootstrap(eager, callback)
 
-Scans the 'filepaths' and register any annotated functions into the Context. If eager=true then this also invokes each registered function (in the order implied by their inter-dependencies) to populate 'Context.instances'. In any case, this will asynchronously return itself either via the Callback (if provided) or else as a Promise. 
+Scans the 'filepaths' and register any annotated functions into the Context. If eager=true then this also populates Context#instances. In any case, this will asynchronously return itself either via the Callback (if provided) or else as a Promise. 
 
+__eager__                      When true causes this to call Context#populate().  
 __callback__                   The (optional) callback for non-Promise based invocation. 
 
 #### Context#getInstance(name, callback) 
