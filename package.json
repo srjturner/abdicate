@@ -12,7 +12,9 @@
     "annotation",
     "annotations",
     "promise",
-    "promises"
+    "promises",
+    "ioc",
+    "inversion of control"
   ],
   "repository": {
     "type": "git",
