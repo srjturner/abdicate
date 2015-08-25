@@ -214,6 +214,16 @@ describe('abdicate', function() {
     errorHandler(done))
   })
   
+  it('accepts constructors that (implicitly) return this AND that (explicitly) return something other else', function(done) {
+    context.bootstrap(true)
+      .then(function(context) {
+        expect(context.instances['constructed'].name).toEqual('constructed')
+        expect(context.instances['returned'].name).toEqual('returned')
+        done()
+    }, 
+    errorHandler(done))
+  })
+  
   afterEach(function(done) {
     context = undefined
     done()
