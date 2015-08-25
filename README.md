@@ -36,7 +36,7 @@ That's all there is to it.
 
 A Mongoose model requires a database connection which requires a configuration loaded from a file which depends upon the NODE_ENV. In the standard Node way this probably means that the model asks some database module for a connection and the database module asks a config module for config and the config asks the process for the NODE_ENV and reads the file. This creates a chain of dependencies, which limits the way that each module can be reused, and makes it hard to test a module in isolation.
 
-The Abdicate approach to solving that problem looks like this:
+The Abdicate approach to solving that problem is standard [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection). It looks like this:
 
 _Configuration:_
 
@@ -83,11 +83,11 @@ _App:_
     // Require Abdicate itself
     var Context = require('abdicate')
     
-    // Create the DI Context, supplying the base directories to autowire:
+    // Create the DI Context, supplying the base directories to scan for annotated functions:
     var rootpath = path.join(__dirname, 'src')
     var context = new Context([rootpath])
     
-    // Explicitly register any factories that cannot be autowired:
+    // Explicitly register any functions that cannot be discovered by scanning the file-system:
     context.register('environment', process.env.NODE_ENV || 'development')
     
     // Bootstrap the DI Context (Promise-style API) with eager-instantiation = true
@@ -148,7 +148,7 @@ Note: although all synchronous functions are invoked as constructors (i.e. ```ne
 
 Construct a new DI context. 
 
-__filepaths__    An array of absolute paths which indicate the directories containing the modules to scan.
+__filepaths__    An array of absolute paths which indicate the directories containing the modules to scan for annotated functions.
 
 ### Context Properties
 
@@ -164,31 +164,31 @@ Explicitly register an instance (or a function to create one) with this Context
 
 __name__                      The logical name of the object  
 __factoryMethodOrInstance__   The factory method to produce instances, or else a literal instance   
-__forceIntance__              Treat factoryMethodOrInstance as an instance even if ```factoryMethodOrInstance instanceof Function == true```  
-__scope__                     The scope ('prototype' or 'singleton') of the object  
-__async__                     False (for synchronous constructors), 'promise' or 'callback'  
-__dependencies__              An array of other logical names that the factory method requires when called.
+__forceIntance__              [Optional, default = false] Treat factoryMethodOrInstance as an instance even if ```factoryMethodOrInstance instanceof Function == true```  
+__scope__                     [Optional, default = 'singleton'] The scope ('prototype' or 'singleton') of the object  
+__async__                     [Optional, default = false] False (for synchronous constructors), 'promise' or 'callback'  
+__dependencies__              [Optional, default = None] An array of other logical names that the factory method requires when called.
 
 #### Context#bootstrap(eager, callback)
 
 Scans the 'filepaths' and register any annotated functions into the Context. If eager=true then this also populates Context#instances. In any case, this will asynchronously return itself either via the Callback (if provided) or else as a Promise. 
 
 __eager__                      When true causes this to call Context#populate().  
-__callback__                   The (optional) callback for non-Promise based invocation. 
+__callback__                   [optional] callback for non-Promise based invocation. 
 
 #### Context#getInstance(name, callback) 
 
 Get the object instance corresponding to the logical name. This will return a Promise if no callback is supplied, otherwise it will invoke the callback in the standard Node (err, result) style. The instance will be created new if it's scope = "prototype" otherwise will return the same instance each time (scope = 'singleton'). Invokes the callback (if supplied) with the instance or else returns a Promise for the instance.
 
 __name__        The logical name (within this context) of the instance to get  
-__callback__    The (optional) callback for non-Promise style invocation. 
+__callback__    [Optional] The callback for non-Promise style invocation. 
  
 #### Context#getInstances(names, callback) 
 
 Get a (sub)set of objects in this context. Any that are scope='prototype' will be created afresh. If the same name is provided more than once then the name will be mapped to an array of instances. Invokes the callback (if supplied) with the result, or else returns a Promise for that result.
 
 __names__       The logical names (within this context) of the instances to get  
-__callback__    The (optional) callback for non-Promise based invocation. 
+__callback__    [Optional] The callback for non-Promise based invocation. 
  
 
 ## FAQ
