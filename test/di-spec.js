@@ -18,7 +18,7 @@ describe('abdicate', function() {
     context = new Context([ path.join(__dirname, 'files') ])
     context.register('model.string', modelStringValue)
     context.register('non.module.string', nonModuleStringValue)
-    context.register('db.uri', {uri: dbUri})
+    context.register('db.config', {uri: dbUri})
     done()
   })
    
@@ -52,7 +52,8 @@ describe('abdicate', function() {
   it('waits for callbacks from async factory methods while bootstrapping', function(done) {
     context.bootstrap(false).then(function(context) {
       context.getInstance('my.model', function(err, model) {
-        expect(model.connection).toBeDefined()
+        if (err) fail(err)
+        else expect(model.connection).toBeDefined()
         done()
       })
     }, errorHandler(done))
@@ -76,8 +77,11 @@ describe('abdicate', function() {
     context.bootstrap(false)
       .then(function(context) {
         context.getInstance('my.service', function(err, service) {
-          expect(service).toBeDefined()
-          expect(service.model).toBeDefined()
+          if (err) fail(err)
+          else {
+            expect(service).toBeDefined()
+            expect(service.model).toBeDefined()
+          }
           done()
         })
       },
@@ -127,7 +131,8 @@ describe('abdicate', function() {
     context.bootstrap(false).
       then(function(context) {
         context.getInstance('my.service', function(err, service) {
-          expect(service.model).toBeDefined()
+          if (err) fail(err)
+          else expect(service.model).toBeDefined()
           done()
         })
       }, 

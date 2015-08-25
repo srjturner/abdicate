@@ -1,10 +1,10 @@
 /**
- * @Requires 'db.uri'
+ * @Requires 'db.config'
  * @Provides 'my.connection' async='callback'
  */
-var connect = function(options, callback) {
+var connect = function(config, callback) {
   wait(100) // fake creating a connection to a DB
-  callback(null, "Connection[" + options.uri + "]")
+  callback(null, "Connection[" + config.uri + "]")
 }
 
 var wait = function(ms) {
