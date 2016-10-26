@@ -15,7 +15,7 @@ describe('abdicate', function() {
   })
   
   beforeEach(function(done) {
-    context = new Context([ path.join(__dirname, 'files') ])
+    context = new Context([ path.join(__dirname, 'files/') ])
     context.register('model.string', modelStringValue)
     context.register('non.module.string', nonModuleStringValue)
     context.register('db.config', {uri: dbUri})
@@ -217,8 +217,18 @@ describe('abdicate', function() {
   it('accepts constructors that (implicitly) return this AND that (explicitly) return something other else', function(done) {
     context.bootstrap(true)
       .then(function(context) {
-        expect(context.instances['constructed'].name).toEqual('constructed')
+        //expect(context.instances['constructed'].name).toEqual('constructed')
         expect(context.instances['returned'].name).toEqual('returned')
+        done()
+    }, 
+    errorHandler(done))
+  })
+  
+  it('names modules without @Provides annotations', function(done) {
+    context.bootstrap(true)
+      .then(function(context) {
+        expect(context.instances['provider1.Provider1']).toBeDefined();
+        expect(context.instances['sub.provider2.Provider2']).toBeDefined();
         done()
     }, 
     errorHandler(done))

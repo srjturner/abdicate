@@ -4,7 +4,7 @@
   "description": "Annotation-Based Dependency Injection",
   "main": "index.js",
   "scripts": {
-    "test": "export NODE_PATH=\"${NODE_PATH}:${PWD}/lib\"; jasmine JASMINE_CONFIG_PATH=test/jasmine.json"
+    "test": "export NODE_PATH=\"${NODE_PATH}:${PWD}\"; jasmine JASMINE_CONFIG_PATH=test/jasmine.json"
   },
   "keywords": [
     "di",
